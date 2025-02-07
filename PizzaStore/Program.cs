@@ -20,26 +20,44 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/pizzas/{id}", (int id, PizzaDB db) => db.Pizzas.Find(id));
-app.MapGet("/pizzas", (PizzaDB db) => db.Pizzas.ToList());
-app.MapPost("/pizzas", (Pizza pizza, PizzaDB db) => {
-    db.Pizzas.Add(pizza);
+app.MapGet("/pizzas/{id}", (int id, PizzaDB db) => db.CartItems.Find(id));
+app.MapGet("/pizzas", (PizzaDB db) => db.CartItems.ToList());
+app.MapPost("/cart", (CartItem cartItem, PizzaDB db) =>
+{
+    db.CartItems.Add(cartItem);
     db.SaveChanges();
-    return Results.Created($"/pizzas/{pizza.Id}", pizza);
+    return Results.Created($"/cart/{cartItem.Id}", cartItem);
 });
-app.MapPut("/pizzas/{id}", (Pizza pizza, PizzaDB db) => {
-    db.Pizzas.Update(pizza);
-    db.SaveChanges();
-    return Results.NoContent();
-});
-app.MapDelete("/pizzas/{id}", (int id, PizzaDB db) => {
-    var pizza = db.Pizzas.Find(id);
-    if (pizza != null)
+
+app.MapPut("/cart/{id}", (int id, CartItem updatedCartItem, PizzaDB db) =>
+{
+    var cartItem = db.CartItems.Find(id);
+    if (cartItem != null)
     {
-        db.Pizzas.Remove(pizza);
+        cartItem.Quantity = updatedCartItem.Quantity;
         db.SaveChanges();
+        return Results.NoContent();
     }
-    return Results.NoContent();
+    return Results.NotFound();
 });
+
+app.MapDelete("/cart/{id}", (int id, PizzaDB db) =>
+{
+    var cartItem = db.CartItems.Find(id);
+    if (cartItem != null)
+    {
+        db.CartItems.Remove(cartItem);
+        db.SaveChanges();
+        return Results.NoContent();
+    }
+    return Results.NotFound();
+});
+
+app.MapGet("/cart", (PizzaDB db) =>
+{
+    var cartItems = db.CartItems.Include(ci => ci.Pizza).ToList();
+    return Results.Ok(cartItems);
+});
+
 
 app.Run();
