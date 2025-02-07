@@ -20,8 +20,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/pizzas/{id}", (int id, PizzaDB db) => db.CartItems.Find(id));
-app.MapGet("/pizzas", (PizzaDB db) => db.CartItems.ToList());
+app.MapGet("/pizzas/{id}", (int id, PizzaDB db) => db.Pizzas.Find(id));
+app.MapGet("/pizzas", (PizzaDB db) => db.Pizzas.ToList());
 app.MapPost("/cart", (CartItem cartItem, PizzaDB db) =>
 {
     db.CartItems.Add(cartItem);
