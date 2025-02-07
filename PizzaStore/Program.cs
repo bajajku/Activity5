@@ -27,7 +27,7 @@ app.MapPost("/pizzas", (Pizza pizza, PizzaDB db) => {
     db.SaveChanges();
     return Results.Created($"/pizzas/{pizza.Id}", pizza);
 });
-app.MapPut("/pizzas", (Pizza pizza, PizzaDB db) => {
+app.MapPut("/pizzas/{id}", (Pizza pizza, PizzaDB db) => {
     db.Pizzas.Update(pizza);
     db.SaveChanges();
     return Results.NoContent();
