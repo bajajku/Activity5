@@ -9,11 +9,22 @@ namespace PizzaStore.DB
         public string? Image { get; set; }
     }
 
+     public class CartItem
+    {
+        public int Id { get; set; }
+        public int PizzaId { get; set; }
+        public int Quantity { get; set; }
+
+        // Navigation property
+        public Pizza Pizza { get; set; } = null!;
+    }
+
     public class PizzaDB : DbContext
     {
         public PizzaDB(DbContextOptions<PizzaDB> options) : base(options) { }
 
         public DbSet<Pizza> Pizzas { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,4 +38,6 @@ namespace PizzaStore.DB
             );
         }
     }
+
+
 }
