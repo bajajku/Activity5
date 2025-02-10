@@ -9,11 +9,13 @@ namespace PizzaStore.DB
         public string? Image { get; set; }
     }
 
-     public class CartItem
+    public class CartItem
     {
         public int Id { get; set; }
-        public int PizzaId { get; set; }
         public int Quantity { get; set; }
+
+        // Foreign key for Pizza
+        public int PizzaId { get; set; }
 
         // Navigation property
         public Pizza Pizza { get; set; } = null!;
@@ -30,6 +32,12 @@ namespace PizzaStore.DB
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure the relationship and foreign key
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Pizza)
+                .WithMany()
+                .HasForeignKey(ci => ci.PizzaId);
+
             // Seed data
             modelBuilder.Entity<Pizza>().HasData(
                 new Pizza { Id = 1, Name = "Montemagno, Pizza shaped like a great mountain", Image = "https://http.pizza/100.jpg" },
@@ -38,6 +46,4 @@ namespace PizzaStore.DB
             );
         }
     }
-
-
 }
